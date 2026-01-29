@@ -1,0 +1,36 @@
+name: Trigger homepage deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
+  workflow_dispatch:
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Dispatch docs-test-homepage deploy
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.HOMEPAGE_DISPATCH_TOKEN }}
+          script: |
+            const sourceRepo = `${context.repo.owner}/${context.repo.repo}`;
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner: "blurfx",
+              repo: "docs-test-homepage",
+              workflow_id: "deploy.yml",
+              ref: "main",
+              inputs: {
+                source_repo: sourceRepo,
+                source_ref: context.ref,
+                source_sha: context.sha,
+              },
+            });
+
+            core.info(`Dispatched blurfx/docs-test-homepage deploy.yml from ${sourceRepo}@${context.sha}`);
