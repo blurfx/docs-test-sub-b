@@ -1,1 +1,3 @@
-# Sub-B guide index.md
+# Sub-B index.md
+
+[/guide/bar](./guide/bar)
